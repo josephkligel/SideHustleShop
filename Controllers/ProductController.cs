@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SideHustleShop.Data;
 using SideHustleShop.DTOs;
+using SideHustleShop.Models;
 
 namespace SideHustleShop.Controllers
 {
@@ -32,5 +34,22 @@ namespace SideHustleShop.Controllers
 
             return new JsonResult(productDto);
         }
+
+        [HttpPost]
+        [ProducesResponseType(typeof(Product), StatusCodes.Status200OK)]
+        public async Task<IActionResult> CreateProduct([FromBody] ProductDto productDto)
+        {
+            if (productDto == null) return BadRequest();
+
+            Product product = _mapper.Map<Product>(productDto);
+
+            await _sideHustleContext.AddAsync(product);
+
+            await _sideHustleContext.SaveChangesAsync();
+
+            return Ok(product);
+        }
     }
+
+    
 }
