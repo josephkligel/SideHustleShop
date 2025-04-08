@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SideHustleShop.Data;
 using SideHustleShop.DTOs;
 using SideHustleShop.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace SideHustleShop.Controllers
 {
@@ -21,7 +22,7 @@ namespace SideHustleShop.Controllers
             _sideHustleContext = sideHustleContext;
         }
 
-        [HttpGet]
+        [HttpGet("/GetProductById")]
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProductById([FromQuery] int productId)
         {
@@ -48,6 +49,22 @@ namespace SideHustleShop.Controllers
             await _sideHustleContext.SaveChangesAsync();
 
             return Ok(product);
+        }
+
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteProductById([Required]int id)
+        {
+            var product = await _sideHustleContext.Products.FindAsync(id);
+
+            if(product == null)
+            {
+                return NotFound();
+            }
+
+            _sideHustleContext.Products.Remove(product);
+
+            return Ok();
         }
     }
 
